@@ -78,7 +78,7 @@ export function layout(title, content) {
     <p>You have <strong>${posts.length}</strong> posts!</p>
     <p><a href="/post/new">Create a Post</a></p>
     <ul id="posts">
-      ${list.join('\n')}
+      ${list.join('\n')} 
     </ul>
     `
     return layout('Posts', content)
