@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', path='/post/edit_post.css') }}">
+<a href="/" id="logo-link">
+    <img src="{{ url_for('static', path='images/home.png') }}" alt="Logo" id="logo">
+</a>
+<h1>Edit</h1>
+<form method="post" action="/post/edit/{{ post.id }}" class="post-form">
+    <input type="text" placeholder="Title" class="form-input" id="title" name="title" value="{{ post.title }}" required>
+    <textarea placeholder="Contents" class="form-textarea" id="body" name="body" required>{{ post.body }}</textarea>
+    <input type="file" id="image-upload" class="form-input">
+    <button type="button" id="upload-button">Upload Image</button>
+    <input type="submit" value="Save" class="form-submit">
+</form>
+
+<script>
+    const uploadButton = document.getElementById("upload-button");
+    const imageUpload = document.getElementById("image-upload");
+    const bodyTextarea = document.getElementById("body");
+
+    uploadButton.addEventListener("click", async () => {
+        const file = imageUpload.files[0];
+        if (!file) {
+            alert("Please select an image to upload.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch("/upload/image", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const imageUrl = data.url;
+                bodyTextarea.value += `\n![Image](${imageUrl})\n`; // Markdown格式插入圖片
+                alert("Image uploaded successfully!");
+            } else {
+                alert("Failed to upload the image.");
+            }
+        } catch (error) {
+            alert("An error occurred during the upload.");
+        }
+    });
+</script>
+{% endblock %}

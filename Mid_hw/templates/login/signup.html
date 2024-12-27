@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', path='/login/login.css') }}">
+<a href="/" id="logo-link">
+    <img src="{{ url_for('static', path='images/home.png') }}" alt="Logo" id="logo">
+</a>
+<div class="login-container">
+    <div class="login-box">
+        <h1>Sign up</h1>
+        <form action="/signup" method="post">
+            <div class="form-group">
+                <input 
+                    type="text" 
+                    placeholder="Username" 
+                    name="username" 
+                    value="{{ username | default('') }}"
+                    maxlength="15"
+                    required
+                >
+                {% if errors and errors.username %}
+                <div class="error-message">{{ errors.username }}</div>
+                <script>
+                    // 页面加载完成后，清空 errors
+                    window.addEventListener("load", () => {
+                        history.replaceState({}, document.title, location.pathname);
+                    });
+                </script>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <input 
+                    type="password" 
+                    placeholder="Password" 
+                    name="password" 
+                    required
+                >
+                {% if errors and errors.password %}
+                <div class="error-message">{{ errors.password }}</div>
+                <script>
+                    // 页面加载完成后，清空 errors
+                    window.addEventListener("load", () => {
+                        history.replaceState({}, document.title, location.pathname);
+                    });
+                </script>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <input 
+                    type="email" 
+                    placeholder="Email" 
+                    name="email" 
+                    value="{{ email | default('') }}"
+                    required
+                >
+                {% if errors and errors.email %}
+                <div class="error-message">{{ errors.email }}</div>
+                <script>
+                    // 页面加载完成后，清空 errors
+                    window.addEventListener("load", () => {
+                        history.replaceState({}, document.title, location.pathname);
+                    });
+                </script>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Sign up">
+            </div>
+            
+            <div class="form-footer">
+                <a href="/login">← Back to login</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

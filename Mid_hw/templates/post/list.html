@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/post/list.css') }}">
+</head>
+
+<body>
+    {% if request.query_params.get('error') %}
+    <script>
+        alert("{{ request.query_params['error'] }}");
+        window.addEventListener("load", () => {
+            history.replaceState({}, document.title, location.pathname);
+        });
+    </script>
+    {% endif %}
+
+    <div class="grid-items">
+        <div class="nav-content">
+            <a href="/" id="logo-link">
+                <img src="{{ url_for('static', path='images/home.png') }}" alt="Logo" id="logo">
+            </a>
+
+            <div class="search-container">
+                <form method="get" action="/search" class="search-form">
+                    <div class="search-input-group">
+                        <input 
+                            type="text" 
+                            name="query" 
+                            placeholder="搜尋..." 
+                            value="{{ query }}"
+                            class="search-input"
+                        >
+                        <select name="search_type" class="search-select">
+                            <option value="all" {% if search_type == 'all' %}selected{% endif %}>全部</option>
+                            <option value="title" {% if search_type == 'title' %}selected{% endif %}>標題</option>
+                            <option value="content" {% if search_type == 'content' %}selected{% endif %}>內容</option>
+                            <option value="author" {% if search_type == 'author' %}selected{% endif %}>作者</option>
+                        </select>
+                        <button type="submit" class="search-btn">搜尋</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="user-container">
+                {% if user %}
+                    <div class="user-dropdown">
+                        <span class="username">{{user['username']}}</span>
+                        <div class="dropdown-content">
+                            <a href="/post/my-posts">我的貼文</a>
+                            <a href="/logout">登出</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="/login" class="login-btn">登入</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="post-header">
+            <p class="post-count">
+                {% if query %}
+                Search results for "<strong>{{ query }}</strong>": <strong>{{ posts|length }}</strong> posts found!
+                {% else %}
+                There are <strong>{{ posts|length }}</strong> posts!
+                {% endif %}
+            </p>
+            <a href="/post/new" class="create-post-btn">Create a Post</a>
+        </div>
+
+        <ul id="posts">
+            {% for post in posts %}
+            <li>
+                <a href="/post/{{ post.id }}">
+                    <h2>{{ post.title }} -- by {{ post.username }}</h2>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
+{% endblock %}

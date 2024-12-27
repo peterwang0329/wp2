@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', path='/login/login.css') }}">
+<a href="/" id="logo-link">
+    <img src="{{ url_for('static', path='images/home.png') }}" alt="Logo" id="logo">
+</a>
+<div class="login-container">
+    <div class="login-box">
+        <h1>Reset Your Password</h1>
+        
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        <script>
+            // 页面加载完成后，清空 errors
+            window.addEventListener("load", () => {
+                history.replaceState({}, document.title, location.pathname);
+            });
+        </script>
+        {% endif %}
+        
+        <form action="/reset/{{ token }}" method="post">
+            <div class="form-group">
+                <input 
+                    type="password" 
+                    name="password" 
+                    placeholder="Enter new password" 
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <input 
+                    type="password" 
+                    name="confirm_password" 
+                    placeholder="Confirm new password" 
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Reset Password">
+            </div>
+            
+            <div class="form-footer">
+                <a href="/login">← Back to Login</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', path='/post/show_post.css') }}">
+
+<div class="grid-items">
+    <div class="nav-content">
+        <a href="/" id="logo-link">
+            <img src="{{ url_for('static', path='images/home.png') }}" alt="Logo" id="logo">
+        </a>
+
+        <div class="user-container">
+            {% if user %}
+                <div class="user-dropdown">
+                    <span class="username">{{user['username']}}</span>
+                    <div class="dropdown-content">
+                        <a href="/post/my-posts">我的貼文</a>
+                        <a href="/logout">登出</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="/login" class="login-btn">登入</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="post-container">
+    <h1>{{ post.title }}</h1>
+    <p>By {{ post.username }}</p>
+    <div class="menu-container">
+        <button class="menu-btn">...</button>
+        <div class="menu">
+            {% if user and user['username'] == post.username %}
+            <button class="menu-option delete-btn" data-post-id="{{ post.id }}">刪除貼文</button>
+            <button class="menu-option edit-btn" data-post-id="{{ post.id }}">修改貼文</button>
+            {% endif %}
+            <button class="menu-option share-btn" data-post-url="/post/{{ post.id }}">分享貼文</button>
+        </div>
+    </div>
+    <hr>
+    <div>{{ content_html | safe }}</div>
+</div>
+
+<script>
+    // 顯示或隱藏選項菜單
+    document.querySelector(".menu-btn").addEventListener("click", () => {
+        const menu = document.querySelector(".menu");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    });
+
+    // 處理刪除貼文
+    document.querySelector(".delete-btn")?.addEventListener("click", async () => {
+        const postId = document.querySelector(".delete-btn").dataset.postId;
+        if (confirm("確定要刪除這篇貼文嗎？")) {
+            const response = await fetch(`/post/${postId}`, { method: "DELETE" });
+            if (response.ok) {
+                alert("貼文已刪除！");
+                window.location.href = "/";
+            } else {
+                alert("刪除失敗。");
+            }
+        }
+    });
+
+    // 處理修改貼文
+    document.querySelector(".edit-btn")?.addEventListener("click", () => {
+        const postId = document.querySelector(".edit-btn").dataset.postId;
+        window.location.href = `/post/edit/${postId}`;
+    });
+
+    // 處理分享貼文
+    document.querySelector(".share-btn").addEventListener("click", () => {
+        const postUrl = document.querySelector(".share-btn").dataset.postUrl;
+        navigator.clipboard.writeText(`${window.location.origin}${postUrl}`).then(() => {
+            alert("貼文網址已複製到剪貼板！");
+        });
+    });
+</script>
+{% endblock %}
