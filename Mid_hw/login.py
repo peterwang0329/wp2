@@ -64,9 +64,16 @@ def signup(request: Request, username: str = Form(...), password: str = Form(...
 
     conn = SQL.get_db()
     cursor = conn.cursor()
+    
+    # 檢查用戶名是否存在
     cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
     if cursor.fetchone():
         errors_sign["username"] = "该用户名已存在"
+
+    # 檢查郵箱是否已被註冊
+    cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+    if cursor.fetchone():
+        errors_sign["email"] = "此電子郵箱已被註冊"
 
     if errors_sign:
         return templates.TemplateResponse(
